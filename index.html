@@ -1,0 +1,867 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#24483f">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="伝検3級">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="manifest" href="manifest.webmanifest">
+  <title>伝統検定3級 2週間合格ドリル</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #17211d;
+      --muted: #66736d;
+      --paper: #fbfaf6;
+      --panel: #ffffff;
+      --line: #dfe5de;
+      --accent: #2f6f62;
+      --accent-2: #b74338;
+      --gold: #b9872b;
+      --soft: #edf4f0;
+      --wrong: #fff0ee;
+      --right: #edf8f1;
+      --shadow: 0 10px 30px rgba(25, 42, 35, .12);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic", sans-serif;
+      background: var(--paper);
+      color: var(--ink);
+      line-height: 1.55;
+      letter-spacing: 0;
+    }
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(251, 250, 246, .94);
+      border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(14px);
+    }
+    .top {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 14px 16px 10px;
+    }
+    h1 {
+      margin: 0 0 8px;
+      font-size: 20px;
+      line-height: 1.2;
+    }
+    .status {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+    .metric {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 8px;
+      min-width: 0;
+    }
+    .metric b {
+      display: block;
+      font-size: 18px;
+      line-height: 1.1;
+    }
+    .metric span {
+      color: var(--muted);
+      font-size: 11px;
+      white-space: nowrap;
+    }
+    nav {
+      max-width: 920px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      padding: 0 16px 12px;
+    }
+    button, select {
+      font: inherit;
+    }
+    .tab, .chip, .primary, .ghost, .choice, .mini {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      color: var(--ink);
+      min-height: 42px;
+    }
+    .tab {
+      padding: 9px 4px;
+      font-size: 13px;
+    }
+    .tab.active {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+    main {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 16px 16px 80px;
+    }
+    section[hidden] { display: none; }
+    .band {
+      margin: 0 0 16px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--line);
+    }
+    .controls {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin: 8px 0 14px;
+    }
+    .select {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      min-height: 44px;
+      padding: 0 10px;
+    }
+    .question-box {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      padding: 16px;
+    }
+    .q-meta {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 12px;
+    }
+    .q-text {
+      font-size: 20px;
+      font-weight: 700;
+      margin: 0 0 14px;
+    }
+    .choices {
+      display: grid;
+      gap: 10px;
+    }
+    .choice {
+      width: 100%;
+      text-align: left;
+      padding: 12px;
+      display: grid;
+      grid-template-columns: 28px 1fr;
+      gap: 8px;
+      align-items: center;
+      min-height: 52px;
+    }
+    .choice .letter {
+      width: 28px;
+      height: 28px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--soft);
+      font-weight: 700;
+      color: var(--accent);
+    }
+    .choice.selected {
+      border-color: var(--accent);
+      background: var(--soft);
+    }
+    .choice.correct {
+      border-color: #65a878;
+      background: var(--right);
+    }
+    .choice.wrong {
+      border-color: #d98d83;
+      background: var(--wrong);
+    }
+    .actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 14px;
+    }
+    .primary {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+      font-weight: 700;
+      padding: 11px 10px;
+    }
+    .ghost {
+      padding: 11px 10px;
+      background: var(--panel);
+    }
+    .feedback {
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: 8px;
+      background: var(--soft);
+      color: var(--ink);
+    }
+    .result-grid, .sheet-grid, .plan-grid {
+      display: grid;
+      gap: 10px;
+    }
+    .result-card, .sheet-card, .plan-card, .flashcard {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px;
+    }
+    .result-card strong, .sheet-card strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+    .bar {
+      height: 9px;
+      background: #e8ece8;
+      border-radius: 99px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+    .bar span {
+      display: block;
+      height: 100%;
+      background: var(--accent);
+      width: 0%;
+    }
+    .flashcard {
+      min-height: 230px;
+      display: grid;
+      align-content: center;
+      text-align: center;
+      box-shadow: var(--shadow);
+    }
+    .flash-front {
+      font-size: 22px;
+      font-weight: 800;
+    }
+    .flash-back {
+      margin-top: 16px;
+      color: var(--accent);
+      font-weight: 700;
+      font-size: 18px;
+    }
+    .card-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .mini {
+      padding: 9px 6px;
+      min-height: 38px;
+      font-size: 13px;
+    }
+    .mini.good { border-color: #65a878; background: var(--right); }
+    .mini.bad { border-color: #d98d83; background: var(--wrong); }
+    .rubric {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+      font-size: 14px;
+    }
+    .rubric th, .rubric td {
+      border-bottom: 1px solid var(--line);
+      padding: 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+    .rubric th {
+      background: var(--soft);
+    }
+    .note {
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .hidden { display: none; }
+    @media (min-width: 720px) {
+      h1 { font-size: 24px; }
+      .status { max-width: 520px; }
+      .result-grid, .sheet-grid, .plan-grid { grid-template-columns: repeat(2, 1fr); }
+      .choices { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="top">
+      <h1>伝統検定3級 2週間合格ドリル</h1>
+      <div class="status" aria-label="学習状況">
+        <div class="metric"><b id="metric-best">-</b><span>模試ベスト</span></div>
+        <div class="metric"><b id="metric-cards">0</b><span>覚えたカード</span></div>
+        <div class="metric"><b id="metric-streak">0</b><span>連続正解</span></div>
+      </div>
+    </div>
+    <nav aria-label="メニュー">
+      <button class="tab active" data-tab="exam">模試</button>
+      <button class="tab" data-tab="cards">カード</button>
+      <button class="tab" data-tab="sheet">要点</button>
+      <button class="tab" data-tab="plan">2週間</button>
+    </nav>
+  </header>
+
+  <main>
+    <section id="exam">
+      <div class="band">
+        <div class="controls">
+          <select id="exam-select" class="select" aria-label="模擬試験選択"></select>
+          <select id="mode-select" class="select" aria-label="出題モード">
+            <option value="all">80問通し</option>
+            <option value="weak">弱点だけ</option>
+            <option value="random">ランダム20問</option>
+          </select>
+        </div>
+        <button id="start-exam" class="primary">開始</button>
+      </div>
+      <div id="quiz-area" class="question-box hidden"></div>
+      <div id="result-area" class="hidden"></div>
+    </section>
+
+    <section id="cards" hidden>
+      <div class="band">
+        <select id="card-filter" class="select" aria-label="カード分野"></select>
+      </div>
+      <div id="flashcard" class="flashcard"></div>
+      <div class="card-row">
+        <button id="card-prev" class="mini">前へ</button>
+        <button id="card-flip" class="mini">答え</button>
+        <button id="card-next" class="mini">次へ</button>
+      </div>
+      <div class="card-row">
+        <button id="card-hard" class="mini bad">苦手</button>
+        <button id="card-known" class="mini good">覚えた</button>
+        <button id="card-shuffle" class="mini">混ぜる</button>
+      </div>
+    </section>
+
+    <section id="sheet" hidden>
+      <div class="sheet-grid" id="sheet-grid"></div>
+      <h2>語呂・ニーモニクス</h2>
+      <div class="sheet-grid" id="mnemonics-grid"></div>
+    </section>
+
+    <section id="plan" hidden>
+      <div class="plan-grid" id="plan-grid"></div>
+      <h2>採点表</h2>
+      <table class="rubric">
+        <thead><tr><th>得点</th><th>判定</th><th>学習アクション</th></tr></thead>
+        <tbody id="rubric-body"></tbody>
+      </table>
+      <p class="note">分野別は10問中 0-5=弱点、6-7=要補強、8-10=強み。公式基準ではなく、70%以上を安定突破するための管理用です。</p>
+    </section>
+  </main>
+
+  <script>
+    const CATEGORIES = ["陶磁器・ガラス","金工・木漆工","和紙・染織","建築・庭園・美術","伝統色・文様","茶道・和菓子・日本茶","食文化・歳時記","芸能"];
+    const rawExams = {
+      A: `壺屋焼の産地はどこか。A 佐賀県 B 沖縄県 C 岐阜県 D 島根県
+無釉焼締で知られる焼物はどれか。A 備前焼 B 京焼 C 九谷焼 D 伊万里焼
+江戸切子は何の工芸か。A 漆芸 B 金工 C ガラス工芸 D 木工
+飛び鉋で有名な福岡県の陶器はどれか。A 有田焼 B 小鹿田焼 C 壺屋焼 D 唐津焼
+九谷焼でよく知られる表現はどれか。A 色絵 B 無釉 C 型染め D 鍛金
+有田焼は主に何に分類されるか。A 陶器 B 磁器 C 漆器 D 鉄器
+備前焼の窯変として有名なのはどれか。A 火襷 B 七宝 C 立涌 D 麻の葉
+壺屋焼の説明として適切なのはどれか。A 沖縄の土を使う B 北海道の土を使う C 金属を打つ D 紙を漉く
+薩摩切子に近い分野はどれか。A ガラス工芸 B 和紙 C 漆芸 D 染織
+江戸切子の特徴はどれか。A カット文様 B 貝象嵌 C 色漆埋め D 焼締
+螺鈿とはどれか。A 金銀粉 B 貝の真珠層 C 木版画 D 竹編み
+蒔絵とは何か。A 漆地を彫る B 金銀粉で文様を描く C 和紙を漉く D 茶を点てる
+沈金とは何か。A 漆地を彫って金粉などを埋める B 貝を埋める C 釉薬を流す D 型染めする
+置上とはどれか。A 白木に胡粉で絵柄を盛る B 鉄を鋳る C 版木を彫る D 藍で染める
+南部鉄器の主要素材は何か。A 銅 B 鉄 C 錫 D 銀
+香川漆器の技法で、彫った溝に色漆を埋めるものはどれか。A 蒟醤 B 螺鈿 C 堆錦 D 切子
+井波彫刻はどの分野に近いか。A 木工 B ガラス C 茶道 D 食文化
+漆の原料は何の樹液か。A ウルシ B スギ C マツ D サクラ
+三木市で有名な伝統産業はどれか。A 刃物 B 友禅 C 和紙 D 庭園
+南部風鈴は何の分野に属するか。A 金工 B 茶道 C 染織 D 建築
+細川紙はどの県に伝わるか。A 埼玉県 B 岐阜県 C 島根県 D 福井県
+本美濃紙はどの県に伝わるか。A 島根県 B 岐阜県 C 埼玉県 D 沖縄県
+石州半紙はどの県に伝わるか。A 福井県 B 京都府 C 島根県 D 新潟県
+和紙原料として代表的でないものはどれか。A 楮 B 三椏 C 雁皮 D 竹皮
+紙幣の主原料はどれか。A 三椏 B 綿 C 稲 D 竹
+西陣織の産地はどこか。A 京都 B 福岡 C 山形 D 鹿児島
+博多織の産地はどこか。A 京都 B 福岡 C 沖縄 D 石川
+沖縄の型染めはどれか。A 友禅 B 紅型 C 更紗 D 絞り
+大島紬と結びつく地域はどこか。A 奄美大島 B 佐渡島 C 淡路島 D 小豆島
+友禅はどの分野に属するか。A 染織 B 金工 C 美術館 D 芸能
+「富嶽三十六景」の作者は誰か。A 歌川広重 B 葛飾北斎 C 喜多川歌麿 D 東洲斎写楽
+「東海道五拾三次」の作者は誰か。A 葛飾北斎 B 歌川広重 C 伊藤若冲 D 円山応挙
+桂離宮を絶賛した建築家は誰か。A ブルーノ・タウト B ガウディ C コルビュジエ D ミース
+枯山水の石庭で特に有名なのはどれか。A 龍安寺 B 東寺 C 法住寺 D 円覚寺
+世界最古の木造建築群として知られるのはどれか。A 法隆寺 B 飛鳥寺 C 東大寺 D 姫路城
+日本最初の本格的仏教寺院はどれか。A 飛鳥寺 B 法隆寺 C 東大寺 D 清水寺
+首里城正殿は何階建てか。A 2階 B 3階 C 4階 D 5階
+現存天守はいくつあるか。A 8 B 10 C 12 D 15
+役者絵で有名なのは誰か。A 東洲斎写楽 B 歌麿 C 北斎 D 広重
+美人画で名高いのは誰か。A 歌麿 B 写楽 C 若冲 D 国芳
+連なる円の文様はどれか。A 七宝 B 籠目 C 麻の葉 D 青海波
+波の文様はどれか。A 市松 B 青海波 C 亀甲 D 巴
+六角形の亀の甲羅の文様はどれか。A 亀甲 B 七宝 C 唐草 D 鹿の子
+編み目由来の文様はどれか。A 籠目 B 立涌 C 雲取り D 巴
+子の成長祈願と結びつく文様はどれか。A 麻の葉 B 青海波 C 亀甲 D 市松
+格子状の文様はどれか。A 市松 B 唐草 C 立涌 D 巴
+矢羽根を図案化した文様はどれか。A 矢絣 B 麻の葉 C 七宝 D 青海波
+萌黄は何系の色か。A 緑系 B 赤系 C 青系 D 紫系
+桜色は何にちなむ色名か。A 桜の花 B 雪 C 海 D 銅
+古代紫は何系の色か。A 黄系 B 紫系 C 緑系 D 茶系
+抹茶を点てる道具はどれか。A 茶筅 B 茶杓 C 茶巾 D 棗
+抹茶をすくう道具はどれか。A 茶碗 B 茶杓 C 釜 D 柄杓
+『The Book of Tea』の著者は誰か。A 岡倉天心 B 栄西 C 千利休 D 芭蕉
+『喫茶養生記』を書いたのは誰か。A 栄西 B 空海 C 親鸞 D 道元
+侘び茶を大成させたのは誰か。A 小堀遠州 B 岡倉天心 C 千利休 D 本阿弥光悦
+抹茶の原料はどれか。A 玉露 B 碾茶 C 焙じ茶 D 番茶
+被覆栽培で知られる高級茶はどれか。A 玉露 B 番茶 C 玄米茶 D 釜炒り茶
+6月16日は何の日か。A 茶の日 B 和菓子の日 C 節分 D 彼岸
+落雁はどの分類か。A 干菓子 B 上生菓子 C 焼菓子 D 蒸菓
+練切はどの分類か。A 干菓子 B 油菓子 C 上生菓子 D 米菓
+一年で最も夜が長い日はどれか。A 冬至 B 夏至 C 春分 D 秋分
+七草粥を食べる日はどれか。A 1月7日 B 3月3日 C 5月5日 D 7月7日
+端午の節句の湯はどれか。A 菖蒲湯 B 柚子湯 C 桜湯 D 梅湯
+土用の丑の日に食べることで有名なのはどれか。A 鰻 B 鮎 C 鯛 D 穴子
+七夕の行事食はどれか。A そうめん B 雑煮 C おはぎ D 赤飯
+十五夜と対になる月見はどれか。A 十三夜 B 九夜 C 二十夜 D 十六夜
+正月の汁物はどれか。A 豚汁 B 雑煮 C 潮汁 D 味噌汁
+大晦日の麺はどれか。A きしめん B うどん C 年越しそば D 冷麦
+ユネスコ登録名として正しいのはどれか。A 和食；日本人の伝統的な食文化 B 日本料理 C 会席 D 精進料理
+柏餅の葉が縁起物である理由はどれか。A 新芽が出るまで古葉が落ちない B 香りが強い C 甘味が出る D 虫除けになる
+文楽の三業はどれか。A 太夫・三味線・人形遣い B 笛・太鼓・琵琶 C 黒衣・花道・見得 D 能管・小鼓・大鼓
+歌舞伎の祖は誰か。A 近松門左衛門 B 出雲阿国 C 世阿弥 D 観阿弥
+女性役専門の歌舞伎俳優は何と呼ぶか。A 立役 B 女方 C 黒衣 D 主遣い
+客席へ伸びる通路は何か。A 花道 B 橋掛り C 床 D 大向う
+歌舞伎の化粧表現は何か。A 隈取 B 見得 C 口上 D 鳴物
+霊的存在が主人公の能はどれか。A 夢幻能 B 現在能 C 世話物 D 新派
+『曽根崎心中』の作者は誰か。A 近松門左衛門 B 井原西鶴 C 三馬 D 一九
+能の合間に演じられる芸能はどれか。A 狂言 B 文楽 C 浄瑠璃 D 舞楽
+「勧進帳」などに関係する区分はどれか。A 松羽目物 B 世話物 C 新派 D 読本
+文楽の三つの要素が一体となることを何というか。A 三業一体 B 一期一会 C 守破離 D 序破急`,
+      B: `沖縄県を代表する焼物はどれか。A 壺屋焼 B 笠間焼 C 萩焼 D 信楽焼
+備前焼はどの説明が正しいか。A 無釉焼締 B 色絵 C 型染め D 蒔絵
+カット文様で知られる工芸はどれか。A 南部鉄器 B 江戸切子 C 紅型 D 蒔絵
+福岡県の小鹿田焼で有名な装飾はどれか。A 飛び鉋 B 螺鈿 C 切箔 D 七宝
+九谷焼は何で知られるか。A 色絵 B 和紙漉き C 鉄瓶 D 染色
+有田焼の分類はどれか。A 漆器 B 磁器 C 鉄器 D 木工
+備前焼の窯変模様はどれか。A 火襷 B 市松 C 青海波 D 牡丹紋
+江戸切子の説明として適切なのはどれか。A ガラスに細かなカットを施す B 木を削って組む C 漆を塗る D 染料を重ねる
+壺屋焼に見られる技法として適切なのはどれか。A 線彫り B 蒔絵 C 螺鈿 D 蟹牡丹
+唐津焼の主な産地はどこか。A 佐賀県 B 沖縄県 C 新潟県 D 山口県
+真珠層を用いる技法はどれか。A 螺鈿 B 蒔絵 C 沈金 D 置上
+金銀粉で文様を表す技法はどれか。A 蒔絵 B 螺鈿 C 蒟醤 D 切子
+漆地を彫って金粉などを埋める技法はどれか。A 置上 B 沈金 C 紅型 D 彫金
+白木に胡粉で絵柄を盛り上げる技法はどれか。A 置上 B 螺鈿 C 蒔絵 D 漉き込み
+南部鉄器は主に何で作られるか。A 鉄 B 銅 C 銀 D 錫
+蒟醤は何をする技法か。A 文様を彫り色漆を埋める B 貝を貼る C 紙を漉く D 竹を編む
+井波彫刻と近い分野はどれか。A 木工 B 食文化 C 美術館 D 茶道
+漆液を採る木はどれか。A ウルシ B スギ C ヒノキ D クス
+三木市が有名なのはどれか。A 刃物 B 和紙 C 陶器 D 日本茶
+南部風鈴はどの分野か。A 金工 B 染織 C 和紙 D 庭園
+埼玉のユネスコ登録和紙はどれか。A 細川紙 B 石州半紙 C 本美濃紙 D 越前和紙
+岐阜のユネスコ登録和紙はどれか。A 細川紙 B 本美濃紙 C 石州半紙 D 黒谷和紙
+島根のユネスコ登録和紙はどれか。A 越前和紙 B 内山紙 C 石州半紙 D 土佐和紙
+和紙原料でないものはどれか。A 楮 B 三椏 C 雁皮 D 桐
+日本の紙幣用紙の主原料はどれか。A 三椏 B 麻 C 竹 D 稲
+京都の代表的織物はどれか。A 西陣織 B 博多織 C 結城紬 D 大島紬
+福岡の代表的織物はどれか。A 博多織 B 西陣織 C 紅型 D 久留米絣
+沖縄の型染めはどれか。A 紅型 B 更紗 C 市松 D 絽刺し
+大島紬と関係が深い島はどこか。A 奄美大島 B 沖ノ島 C 択捉島 D 淡路島
+友禅はどの分野か。A 染織 B 金工 C 建築 D 芸能
+「富嶽三十六景」の作者は誰か。A 葛飾北斎 B 喜多川歌麿 C 写楽 D 広重
+「東海道五拾三次」の作者は誰か。A 歌麿 B 広重 C 北斎 D 北大路魯山人
+桂離宮を絶賛したのは誰か。A ブルーノ・タウト B ライト C ダリ D ピカソ
+枯山水石庭で有名な寺はどれか。A 龍安寺 B 東大寺 C 高山寺 D 東寺
+世界最古の木造建築群として知られるのはどれか。A 法隆寺 B 姫路城 C 飛鳥寺 D 清水寺
+日本最初の本格的仏教寺院はどれか。A 飛鳥寺 B 法隆寺 C 東福寺 D 浅草寺
+首里城正殿の階数はどれか。A 2階 B 3階 C 4階 D 5階
+現存天守の数はどれか。A 12 B 10 C 9 D 15
+役者絵で有名な浮世絵師は誰か。A 東洲斎写楽 B 歌麿 C 北斎 D 若冲
+美人画で著名なのは誰か。A 喜多川歌麿 B 写楽 C 広重 D 狩野探幽
+円が連なる文様はどれか。A 七宝 B 籠目 C 巴 D 麻の葉
+波を表す文様はどれか。A 青海波 B 亀甲 C 市松 D 鹿の子
+六角形で亀の甲羅を表す文様はどれか。A 立涌 B 七宝 C 亀甲 D 唐草
+編み目由来の文様はどれか。A 籠目 B 市松 C 巴 D 麻の葉
+成長祈願と結びつく文様はどれか。A 麻の葉 B 亀甲 C 青海波 D 七宝
+格子状の文様はどれか。A 市松 B 立涌 C 青海波 D 亀甲
+矢羽根の文様はどれか。A 矢絣 B 唐草 C 籠目 D 巴
+萌黄はどの系統か。A 緑系 B 赤系 C 青系 D 白系
+桜色は何にちなむか。A 桜の花 B 海 C 夕日 D 茶葉
+古代紫は何系か。A 紫系 B 青系 C 茶系 D 黄系
+茶道で抹茶を点てる道具はどれか。A 茶杓 B 茶筅 C 茶入 D 茶巾
+抹茶をすくう道具はどれか。A 棗 B 茶杓 C 釜 D 茶碗
+『The Book of Tea』の著者は誰か。A 栄西 B 岡倉天心 C 千利休 D 世阿弥
+『喫茶養生記』の著者は誰か。A 空海 B 栄西 C 日蓮 D 近松門左衛門
+侘び茶を大成させたのは誰か。A 千利休 B 岡倉天心 C 栄西 D 小野道風
+抹茶の原料茶はどれか。A 碾茶 B 番茶 C 玉露 D 煎茶
+被覆栽培で有名な茶はどれか。A 玉露 B ほうじ茶 C 番茶 D 玄米茶
+6月16日は何の日か。A 和菓子の日 B 茶の日 C 春分 D 彼岸
+落雁はどれか。A 干菓子 B 上生菓子 C 焼菓子 D あられ
+練切はどれか。A 米菓 B 上生菓子 C 油菓子 D 干菓子
+最も夜が長い日はどれか。A 冬至 B 夏至 C 春分 D 秋分
+七草粥はいつ食べるか。A 1月7日 B 1月15日 C 3月3日 D 5月5日
+端午の節句の湯として知られるのはどれか。A 菖蒲湯 B 桜湯 C 松湯 D 柚子湯
+土用の丑の日に有名なのはどれか。A 鰻 B 鮒 C 鯛 D 鰯
+七夕の行事食はどれか。A そうめん B おはぎ C 雑煮 D 赤飯
+十五夜と対で重視される月見はどれか。A 十三夜 B 三日月 C 十六夜 D 二十夜
+正月の汁物はどれか。A 雑煮 B 味噌汁 C すいとん D けんちん汁
+大晦日に食べる麺はどれか。A 年越しそば B うどん C きしめん D そうめん
+和食のユネスコ登録名として正しいのはどれか。A 和食；日本人の伝統的な食文化 B 和料理 C 日本食 D 郷土料理
+柏餅の葉が縁起物な理由はどれか。A 古葉が新芽の出るまで落ちない B 香りが強い C 柔らかい D 色が濃い
+文楽の三業はどれか。A 太夫・三味線・人形遣い B 琵琶・能管・太鼓 C 花道・隈取・見得 D 黒衣・女方・立役
+歌舞伎の祖は誰か。A 出雲阿国 B 世阿弥 C 観阿弥 D 十返舎一九
+歌舞伎で女性役専門の俳優は何か。A 立役 B 女方 C 幕内 D 後見
+客席へ伸びる通路は何か。A 花道 B 橋掛り C 揚幕 D 奈落
+歌舞伎の化粧表現は何か。A 隈取 B 見得 C 口上 D 大向う
+霊的存在が主人公の能はどれか。A 夢幻能 B 現在能 C 時代物 D 世話物
+『曽根崎心中』の作者は誰か。A 近松門左衛門 B 井原西鶴 C 北斎 D 南北
+能の合間に演じられるのはどれか。A 狂言 B 文楽 C 浄瑠璃 D 伎楽
+能舞台風の装置を用いる歌舞伎演目はどれか。A 松羽目物 B 世話物 C 心中物 D 新派
+文楽で三つの要素が一体になることは何と表現されるか。A 三業一体 B 守破離 C 序破急 D 一座建立`,
+      C: `沖縄の代表的焼物はどれか。A 壺屋焼 B 有田焼 C 瀬戸焼 D 笠間焼
+無釉・高温焼締で知られるのはどれか。A 備前焼 B 九谷焼 C 京焼 D 益子焼
+江戸切子の特徴はどれか。A カット文様 B 貝象嵌 C 型染め D 漉き模様
+小鹿田焼で有名な装飾はどれか。A 飛び鉋 B 蒔絵 C 螺鈿 D 墨流し
+九谷焼は何で知られるか。A 色絵 B 焼締 C 和紙 D 茶筅
+有田焼は主に何か。A 磁器 B 陶器 C 金工 D 木工
+備前焼の代表的窯変はどれか。A 火襷 B 麻の葉 C 市松 D 七宝
+壺屋焼に関係が深い地域はどこか。A 沖縄 B 京都 C 島根 D 秋田
+薩摩切子に近い分野はどれか。A ガラス B 和紙 C 漆器 D 茶道
+江戸切子は何を施すか。A カット B 沈金 C 螺鈿 D 蒟醤
+貝の真珠層を使う技法はどれか。A 螺鈿 B 蒔絵 C 沈金 D 置上
+金銀粉で文様を描く技法はどれか。A 蒔絵 B 螺鈿 C 切子 D 紅型
+漆地を彫って金粉などを埋める技法はどれか。A 沈金 B 蒔絵 C 置上 D 和綴じ
+白木に胡粉で絵柄を盛り上げる技法はどれか。A 置上 B 螺鈿 C 彫金 D 段通
+南部鉄器の素材はどれか。A 鉄 B 銅 C 錫 D 銀
+蒟醤の説明として適切なのはどれか。A 溝に色漆を埋める B 貝を貼る C 紙を漉く D 茶を点てる
+井波彫刻は何の分野に近いか。A 木工 B ガラス C 日本茶 D 建築
+漆液を採る木はどれか。A ウルシ B スギ C モミ D クスノキ
+三木市が有名なのはどれか。A 刃物 B 庭園 C 染織 D 菓子
+南部風鈴はどの分野か。A 金工 B 和紙 C 食文化 D 芸能
+細川紙はどれか。A 埼玉のユネスコ登録和紙 B 岐阜の和紙 C 島根の和紙 D 福井の和紙
+本美濃紙はどれか。A 埼玉の和紙 B 岐阜のユネスコ登録和紙 C 島根の和紙 D 長野の和紙
+石州半紙はどれか。A 福井 B 埼玉 C 島根 D 山形
+和紙原料で代表的でないものはどれか。A 楮 B 三椏 C 雁皮 D 桐
+日本の紙幣用紙に使われる主原料はどれか。A 三椏 B 稲 C 葛 D 木炭
+京都の代表的織物はどれか。A 西陣織 B 博多織 C 紅型 D 絣
+福岡の代表的織物はどれか。A 博多織 B 西陣織 C 結城紬 D 大島紬
+沖縄の型染めはどれか。A 紅型 B 更紗 C 友禅 D 市松
+大島紬と関係が深いのはどこか。A 奄美大島 B 八丈島 C 淡路島 D 佐渡島
+友禅は何の分野か。A 染織 B 金工 C 建築 D 食文化
+『富嶽三十六景』の作者は誰か。A 葛飾北斎 B 歌川広重 C 若冲 D 写楽
+『東海道五拾三次』の作者は誰か。A 広重 B 北斎 C 歌麿 D 光琳
+桂離宮を賞賛したのは誰か。A ブルーノ・タウト B ライト C ロダン D ゴッホ
+枯山水石庭で知られる寺はどれか。A 龍安寺 B 東寺 C 平等院 D 薬師寺
+世界最古の木造建築群として知られるのはどれか。A 法隆寺 B 飛鳥寺 C 姫路城 D 春日大社
+日本最初の本格的仏教寺院はどれか。A 飛鳥寺 B 法隆寺 C 東大寺 D 西本願寺
+首里城正殿は何階建てか。A 3階 B 2階 C 4階 D 1階
+現存天守はいくつか。A 12 B 8 C 15 D 20
+役者絵で知られるのは誰か。A 東洲斎写楽 B 喜多川歌麿 C 葛飾北斎 D 円山応挙
+美人画で有名なのは誰か。A 喜多川歌麿 B 写楽 C 国芳 D 若冲
+円満・調和の文様はどれか。A 七宝 B 青海波 C 籠目 D 麻の葉
+波の文様はどれか。A 青海波 B 市松 C 巴 D 亀甲
+亀の甲羅を表す文様はどれか。A 亀甲 B 七宝 C 唐草 D 立涌
+編み目由来で魔除けの意味もある文様はどれか。A 籠目 B 麻の葉 C 雲取り D 巴
+成長祈願と結びつく文様はどれか。A 麻の葉 B 唐草 C 七宝 D 青海波
+格子状の文様はどれか。A 市松 B 亀甲 C 巴 D 籠目
+矢羽根を表す文様はどれか。A 矢絣 B 鹿の子 C 唐草 D 籠目
+萌黄はどの色系統か。A 緑系 B 紫系 C 茶系 D 黒系
+桜色は何にちなむか。A 桜の花 B 海 C 土 D 鉄
+古代紫はどの色系統か。A 紫系 B 黄系 C 赤系 D 緑系
+茶道で抹茶を点てる道具はどれか。A 茶筅 B 釜 C 茶碗 D 茶杓
+茶道で抹茶をすくう道具はどれか。A 柄杓 B 茶杓 C 茶碗 D 棗
+『The Book of Tea』の著者は誰か。A 岡倉天心 B 栄西 C 千利休 D 世阿弥
+『喫茶養生記』の著者は誰か。A 道元 B 栄西 C 空海 D 親鸞
+侘び茶の大成者は誰か。A 千利休 B 岡倉天心 C 若冲 D 本阿弥光悦
+抹茶の原料はどれか。A 碾茶 B 番茶 C 焙じ茶 D 玄米茶
+被覆栽培で知られる高級茶はどれか。A 玉露 B 釜炒り茶 C 番茶 D 柿の葉茶
+6月16日は何の日か。A 和菓子の日 B 茶摘みの日 C 雛祭り D 七草
+落雁はどれか。A 干菓子 B 上生菓子 C 焼菓子 D 米菓
+練切はどれか。A 上生菓子 B 油菓子 C 干菓子 D 飴菓子
+一年で最も夜が長い日はどれか。A 冬至 B 春分 C 秋分 D 夏至
+七草粥を食べる日はどれか。A 1月7日 B 1月1日 C 3月3日 D 9月9日
+端午の節句の湯はどれか。A 菖蒲湯 B 桜湯 C 玄米湯 D 柚子湯
+土用の丑の日に食べることで有名なのはどれか。A 鰻 B 鯛 C 鮎 D 鰯
+七夕の行事食はどれか。A そうめん B そば C もち米 D 雑煮
+十五夜と対になる月見はどれか。A 十三夜 B 七夜 C 十六夜 D 二十夜
+正月の汁物はどれか。A 雑煮 B 澄まし汁 C 粕汁 D けんちん汁
+大晦日に食べる麺はどれか。A 年越しそば B 冷麦 C うどん D そうめん
+ユネスコ登録名として正しいのはどれか。A 和食；日本人の伝統的な食文化 B 日本料理 C 郷土食 D 会席料理
+柏餅の葉が縁起物な理由はどれか。A 古葉が新芽の出るまで落ちない B 香りが強い C 皮が厚い D 日持ちする
+文楽の三業はどれか。A 太夫・三味線・人形遣い B 花道・黒衣・見得 C 能管・小鼓・大鼓 D 笛・太鼓・琵琶
+歌舞伎の祖は誰か。A 出雲阿国 B 世阿弥 C 観阿弥 D 芭蕉
+女性役専門の歌舞伎俳優は何か。A 女方 B 立役 C 後見 D 主遣い
+客席に伸びる通路はどれか。A 花道 B 橋掛り C 床 D 口上台
+歌舞伎の化粧表現はどれか。A 隈取 B 見得 C 黒衣 D 口上
+霊的存在が主人公となる能の形式はどれか。A 夢幻能 B 現在能 C 心中物 D 時代物
+『曽根崎心中』の作者は誰か。A 近松門左衛門 B 井原西鶴 C 北斎 D 式亭三馬
+能の合間に演じられる滑稽味ある芸能はどれか。A 狂言 B 文楽 C 能管 D 伎楽
+能舞台風の装置を使う歌舞伎の演目はどれか。A 松羽目物 B 世話物 C 新派 D 人情話
+文楽で三つの要素が一体となることを何というか。A 三業一体 B 守破離 C 序破急 D 花伝書`
+    };
+    const answerKeys = {
+      A: "B A C B A B A A A A B B A A B A A A A A A B C D A A B B A A B B A A A A B C A A A B A A A A A A A B A B A A C B A B A C A A A A A A B C A A A B B A A A A A A A",
+      B: "A A B A A B A A A A A A B A A A A A A A A B C D A A A A A A A B A A A A B A A A A A C A A A A A A A B B B B A A A A A B A A A A A A A A A A A A B A A A A A A A",
+      C: "A A A A A A A A A A A A A A A A A A A A A B C D A A A A A A A A A A A A A A A A A A A A A A A A A A A B A B A A A A A A A A A A A A A A A A A A A A A A A A A A"
+    };
+    const sheetRows = [
+      ["陶磁器・ガラス","壺屋=沖縄、備前=無釉焼締、江戸切子=カット","有田=磁器、備前=焼締"],
+      ["金工・木漆工","螺鈿=貝、蒔絵=金銀粉、沈金=彫って埋める、置上=白木+胡粉","置上と蒔絵を混同しない"],
+      ["和紙・染織","細川=埼玉、本美濃=岐阜、石州=島根、紙幣=三椏","西陣=京都、博多=福岡"],
+      ["建築・庭園・美術","北斎=富嶽、広重=東海道、桂離宮=タウト、龍安寺=枯山水","写楽=役者絵、歌麿=美人画"],
+      ["伝統色・文様","七宝=円満、青海波=波、亀甲=長寿、籠目=魔除け、麻の葉=成長","市松は格子"],
+      ["茶道・和菓子・日本茶","茶筅=点てる、茶杓=すくう、天心=英語、栄西=茶書、落雁=干菓子、練切=上生菓子","玉露と碾茶を混同しない"],
+      ["食文化・歳時記","冬至=夜最長、7日=七草、7/7=そうめん、土用丑=鰻、正月=雑煮","十五夜だけでなく十三夜"],
+      ["芸能","文楽三業=太夫・三味線・人形遣い、歌舞伎祖=出雲阿国、花道・女方・隈取・狂言・夢幻能","花道と橋掛りの混同"]
+    ];
+    const mnemonics = [
+      ["文楽三業=た・しゃ・にん","太夫・三味線・人形遣い。"],
+      ["和紙三遺産=細・美・石","細川紙・本美濃紙・石州半紙。"],
+      ["北は富士、広は街道","北斎=富嶽三十六景、広重=東海道五拾三次。"],
+      ["七宝は輪、青海波は波","形で一瞬判断する。"],
+      ["英語は天心、茶書は栄西","The Book of Tea と喫茶養生記を対で覚える。"],
+      ["備前は火と土だけ","無釉焼締のイメージ固定。"]
+    ];
+    const flashcards = [
+      ["陶磁器・ガラス","壺屋焼の産地は？","沖縄県。沖縄の土と釉薬、線彫り・飛び鉋が手掛かり。"],
+      ["陶磁器・ガラス","備前焼の特徴は？","無釉・高温焼締。窯変を楽しむ。"],
+      ["金工・木漆工","螺鈿とは？","貝の真珠層を木地や漆地に埋め込む技法。"],
+      ["金工・木漆工","置上とは？","白木の素地に胡粉で絵柄を盛り上げる技法。"],
+      ["和紙・染織","細川紙はどこ？","埼玉県のユネスコ登録和紙。"],
+      ["和紙・染織","紙幣の主原料は？","三椏。"],
+      ["建築・庭園・美術","富嶽三十六景の作者は？","葛飾北斎。"],
+      ["建築・庭園・美術","東海道五拾三次の作者は？","歌川広重。"],
+      ["伝統色・文様","七宝文様の意味は？","円満・調和・縁のつながり。"],
+      ["伝統色・文様","青海波文様の形は？","海の波。"],
+      ["茶道・和菓子・日本茶","The Book of Tea の著者は？","岡倉天心。"],
+      ["茶道・和菓子・日本茶","喫茶養生記の著者は？","栄西。"],
+      ["茶道・和菓子・日本茶","落雁は何菓子？","干菓子。"],
+      ["茶道・和菓子・日本茶","練切は何菓子？","上生菓子。"],
+      ["食文化・歳時記","冬至とは？","一年で最も夜が長い日。"],
+      ["食文化・歳時記","十三夜とは？","十五夜と対で重視される月見。"],
+      ["芸能","文楽の三業は？","太夫・三味線・人形遣い。"],
+      ["芸能","歌舞伎の祖は？","出雲阿国。"],
+      ["芸能","女方とは？","歌舞伎の女性役専門俳優。"],
+      ["芸能","夢幻能とは？","霊的存在が主人公となる能の形式。"]
+    ];
+    const plan = [
+      ["1日目","要点シートを通読。カード20枚を一周して、知らない語だけ苦手にする。"],
+      ["2日目","陶磁器・金工木漆工を集中。模試Aの1-20だけ解く。"],
+      ["3日目","和紙染織・建築美術を集中。模試Aの21-40だけ解く。"],
+      ["4日目","文様色・茶和菓子を集中。模試Aの41-60だけ解く。"],
+      ["5日目","食文化・芸能を集中。模試Aの61-80だけ解く。"],
+      ["6日目","模試Aを80問通し。56点未満なら要点に戻る。"],
+      ["7日目","Aの誤答だけ復習。弱点分野のカードを追加で一周。"],
+      ["8日目","模試Bを80問通し。時間は60分以内を意識。"],
+      ["9日目","Bの誤答を分野別に潰す。6問未満の分野を優先。"],
+      ["10日目","模試Cをランダム20問で2セット。反射速度を上げる。"],
+      ["11日目","要点シートを暗唱。語呂を声に出して確認。"],
+      ["12日目","模試Cを80問通し。63点以上なら合格有望。"],
+      ["13日目","全模試の誤答だけ。新規学習は増やさない。"],
+      ["14日目","カード軽め、要点シート1回、早く寝る。"]
+    ];
+    const rubric = [
+      ["70-80","安全圏","新規学習を止め、誤答復習と速度維持だけ"],
+      ["63-69","合格有望","弱点2分野のカードを1周追加"],
+      ["56-62","ボーダー","模試翌日に総見直し+1回再模試"],
+      ["50-55","要補強","工芸4分野か文化4分野のどちらかを再学習"],
+      ["0-49","再設計","診断に戻り、12週計画を最初から"]
+    ];
+    const state = JSON.parse(localStorage.getItem("denken3") || "{}");
+    state.best ??= 0;
+    state.knownCards ??= [];
+    state.wrongQuestions ??= [];
+    state.streak ??= 0;
+
+    function save() {
+      localStorage.setItem("denken3", JSON.stringify(state));
+      document.getElementById("metric-best").textContent = state.best ? `${state.best}/80` : "-";
+      document.getElementById("metric-cards").textContent = state.knownCards.length;
+      document.getElementById("metric-streak").textContent = state.streak;
+    }
+    function parseExam(name) {
+      const keys = answerKeys[name].split(/\s+/);
+      return rawExams[name].trim().split("\n").map((line, i) => {
+        const m = line.match(/^(.+?)A (.+?) B (.+?) C (.+?) D (.+)$/);
+        if (!m) throw new Error(`Parse failed ${name}-${i + 1}`);
+        return { exam: name, no: i + 1, category: CATEGORIES[Math.floor(i / 10)], text: m[1], choices: { A:m[2], B:m[3], C:m[4], D:m[5] }, answer: keys[i] };
+      });
+    }
+    const exams = Object.fromEntries(Object.keys(rawExams).map(k => [k, parseExam(k)]));
+    let quiz = { questions: [], index: 0, answers: {}, locked: false };
+    let cardList = [...flashcards], cardIndex = 0, cardShown = false;
+
+    function el(tag, attrs = {}, children = []) {
+      const node = document.createElement(tag);
+      Object.entries(attrs).forEach(([k,v]) => k === "class" ? node.className = v : node.setAttribute(k, v));
+      children.forEach(child => node.append(child instanceof Node ? child : document.createTextNode(child)));
+      return node;
+    }
+    function shuffle(arr) {
+      return [...arr].sort(() => Math.random() - 0.5);
+    }
+    function init() {
+      document.getElementById("exam-select").innerHTML = Object.keys(exams).map(k => `<option value="${k}">模擬試験${k}</option>`).join("");
+      document.getElementById("card-filter").innerHTML = `<option value="all">全分野</option>` + CATEGORIES.map(c => `<option value="${c}">${c}</option>`).join("");
+      document.querySelectorAll(".tab").forEach(btn => btn.addEventListener("click", () => switchTab(btn.dataset.tab)));
+      document.getElementById("start-exam").addEventListener("click", startExam);
+      document.getElementById("card-filter").addEventListener("change", filterCards);
+      document.getElementById("card-prev").addEventListener("click", () => moveCard(-1));
+      document.getElementById("card-next").addEventListener("click", () => moveCard(1));
+      document.getElementById("card-flip").addEventListener("click", () => { cardShown = !cardShown; renderCard(); });
+      document.getElementById("card-known").addEventListener("click", markKnown);
+      document.getElementById("card-hard").addEventListener("click", markHard);
+      document.getElementById("card-shuffle").addEventListener("click", () => { cardList = shuffle(cardList); cardIndex = 0; cardShown = false; renderCard(); });
+      document.getElementById("sheet-grid").append(...sheetRows.map(([cat, core, warn]) => el("article", { class:"sheet-card" }, [el("strong", {}, [cat]), el("div", {}, [core]), el("p", { class:"note" }, [`混同注意: ${warn}`])])));
+      document.getElementById("mnemonics-grid").append(...mnemonics.map(([front, back]) => el("article", { class:"sheet-card" }, [el("strong", {}, [front]), el("div", {}, [back])])));
+      document.getElementById("plan-grid").append(...plan.map(([day, task]) => el("article", { class:"plan-card" }, [el("strong", {}, [day]), el("div", {}, [task])])));
+      document.getElementById("rubric-body").innerHTML = rubric.map(r => `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join("");
+      renderCard();
+      save();
+    }
+    function switchTab(name) {
+      document.querySelectorAll("main > section").forEach(s => s.hidden = s.id !== name);
+      document.querySelectorAll(".tab").forEach(b => b.classList.toggle("active", b.dataset.tab === name));
+    }
+    function startExam() {
+      const examName = document.getElementById("exam-select").value;
+      const mode = document.getElementById("mode-select").value;
+      let qs = exams[examName];
+      if (mode === "weak" && state.wrongQuestions.length) {
+        const ids = new Set(state.wrongQuestions);
+        qs = Object.values(exams).flat().filter(q => ids.has(`${q.exam}-${q.no}`));
+      } else if (mode === "random") {
+        qs = shuffle(qs).slice(0, 20);
+      }
+      quiz = { questions: qs, index: 0, answers: {}, locked: false };
+      document.getElementById("result-area").classList.add("hidden");
+      document.getElementById("quiz-area").classList.remove("hidden");
+      renderQuestion();
+    }
+    function renderQuestion() {
+      const q = quiz.questions[quiz.index];
+      const box = document.getElementById("quiz-area");
+      box.innerHTML = "";
+      const selected = quiz.answers[`${q.exam}-${q.no}`];
+      box.append(
+        el("div", { class:"q-meta" }, [el("span", {}, [`${quiz.index + 1}/${quiz.questions.length}`]), el("span", {}, [q.category])]),
+        el("p", { class:"q-text" }, [q.text]),
+        el("div", { class:"choices" }, Object.entries(q.choices).map(([letter, text]) => {
+          const btn = el("button", { class:"choice", type:"button" }, [el("span", { class:"letter" }, [letter]), el("span", {}, [text])]);
+          if (selected === letter) btn.classList.add("selected");
+          if (quiz.locked) {
+            if (letter === q.answer) btn.classList.add("correct");
+            if (selected === letter && letter !== q.answer) btn.classList.add("wrong");
+          }
+          btn.addEventListener("click", () => answerQuestion(letter));
+          return btn;
+        })),
+        el("div", { class:"actions" }, [
+          el("button", { class:"ghost", id:"prev-q", type:"button" }, ["前へ"]),
+          el("button", { class:"primary", id:"next-q", type:"button" }, [quiz.index === quiz.questions.length - 1 ? "結果を見る" : "次へ"])
+        ])
+      );
+      document.getElementById("prev-q").disabled = quiz.index === 0;
+      document.getElementById("prev-q").addEventListener("click", () => { quiz.index--; quiz.locked = false; renderQuestion(); });
+      document.getElementById("next-q").addEventListener("click", nextQuestion);
+      if (quiz.locked) {
+        box.append(el("div", { class:"feedback" }, [`正解: ${q.answer} ${q.choices[q.answer]}`]));
+      }
+    }
+    function answerQuestion(letter) {
+      const q = quiz.questions[quiz.index];
+      quiz.answers[`${q.exam}-${q.no}`] = letter;
+      quiz.locked = true;
+      if (letter === q.answer) state.streak += 1;
+      else state.streak = 0;
+      save();
+      renderQuestion();
+    }
+    function nextQuestion() {
+      if (quiz.index < quiz.questions.length - 1) {
+        quiz.index++;
+        quiz.locked = false;
+        renderQuestion();
+      } else showResult();
+    }
+    function showResult() {
+      const byCat = Object.fromEntries(CATEGORIES.map(c => [c, { ok:0, total:0 }]));
+      let ok = 0;
+      const wrong = [];
+      quiz.questions.forEach(q => {
+        const got = quiz.answers[`${q.exam}-${q.no}`];
+        const hit = got === q.answer;
+        byCat[q.category].total += 1;
+        if (hit) { ok++; byCat[q.category].ok += 1; }
+        else wrong.push(`${q.exam}-${q.no}`);
+      });
+      if (quiz.questions.length === 80) state.best = Math.max(state.best, ok);
+      state.wrongQuestions = [...new Set([...wrong, ...state.wrongQuestions])].slice(0, 120);
+      save();
+      const result = document.getElementById("result-area");
+      const scaled = Math.round(ok / quiz.questions.length * 80);
+      const judge = rubric.find(r => scaled >= Number(r[0].split("-")[0]) && scaled <= Number(r[0].split("-")[1])) || rubric.at(-1);
+      result.innerHTML = `<h2>結果 ${ok}/${quiz.questions.length}問 正解</h2><p><strong>${judge[1]}</strong> ${judge[2]}</p><div class="result-grid"></div>`;
+      const grid = result.querySelector(".result-grid");
+      CATEGORIES.forEach(cat => {
+        const r = byCat[cat];
+        if (!r.total) return;
+        const level = r.ok <= Math.floor(r.total * .5) ? "弱点" : r.ok <= Math.floor(r.total * .7) ? "要補強" : "強み";
+        const card = el("article", { class:"result-card" }, [
+          el("strong", {}, [cat]),
+          el("div", {}, [`${r.ok}/${r.total} ${level}`]),
+          el("div", { class:"bar" }, [el("span", { style:`width:${r.ok / r.total * 100}%` }, [])])
+        ]);
+        grid.append(card);
+      });
+      document.getElementById("quiz-area").classList.add("hidden");
+      result.classList.remove("hidden");
+      result.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+    function filterCards() {
+      const f = document.getElementById("card-filter").value;
+      cardList = flashcards.filter(c => f === "all" || c[0] === f);
+      cardIndex = 0;
+      cardShown = false;
+      renderCard();
+    }
+    function renderCard() {
+      const wrap = document.getElementById("flashcard");
+      if (!cardList.length) {
+        wrap.innerHTML = "<div>カードがありません</div>";
+        return;
+      }
+      const card = cardList[cardIndex];
+      const id = `${card[1]}-${card[2]}`;
+      wrap.innerHTML = `<div class="note">${card[0]} ${cardIndex + 1}/${cardList.length}</div><div class="flash-front">${card[1]}</div>${cardShown ? `<div class="flash-back">${card[2]}</div>` : `<div class="note">答えボタンで確認</div>`}${state.knownCards.includes(id) ? `<div class="note">覚えた済み</div>` : ""}`;
+    }
+    function moveCard(delta) {
+      cardIndex = (cardIndex + delta + cardList.length) % cardList.length;
+      cardShown = false;
+      renderCard();
+    }
+    function markKnown() {
+      const c = cardList[cardIndex], id = `${c[1]}-${c[2]}`;
+      if (!state.knownCards.includes(id)) state.knownCards.push(id);
+      save();
+      moveCard(1);
+    }
+    function markHard() {
+      cardShown = true;
+      renderCard();
+    }
+    init();
+    if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost" || location.hostname === "127.0.0.1")) {
+      navigator.serviceWorker.register("./sw.js").catch(() => {});
+    }
+  </script>
+</body>
+</html>
