@@ -114,7 +114,7 @@
     }
     .controls {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1fr;
       gap: 8px;
       margin: 8px 0 14px;
     }
@@ -289,6 +289,7 @@
     @media (min-width: 720px) {
       h1 { font-size: 24px; }
       .status { max-width: 520px; }
+      .controls { grid-template-columns: repeat(3, 1fr); }
       .result-grid, .sheet-grid, .plan-grid { grid-template-columns: repeat(2, 1fr); }
       .choices { grid-template-columns: repeat(2, 1fr); }
     }
@@ -317,8 +318,10 @@
       <div class="band">
         <div class="controls">
           <select id="exam-select" class="select" aria-label="模擬試験選択"></select>
+          <select id="category-select" class="select" aria-label="分野選択"></select>
           <select id="mode-select" class="select" aria-label="出題モード">
-            <option value="all">80問通し</option>
+            <option value="all">全部解く</option>
+            <option value="random10">ランダム10問</option>
             <option value="weak">弱点だけ</option>
             <option value="random">ランダム20問</option>
           </select>
@@ -606,11 +609,93 @@
 能の合間に演じられる滑稽味ある芸能はどれか。A 狂言 B 文楽 C 能管 D 伎楽
 能舞台風の装置を使う歌舞伎の演目はどれか。A 松羽目物 B 世話物 C 新派 D 人情話
 文楽で三つの要素が一体となることを何というか。A 三業一体 B 守破離 C 序破急 D 花伝書`
+      ,
+      D: `沖縄の焼物として最も関係が深いものはどれか。A 壺屋焼 B 備前焼 C 有田焼 D 九谷焼
+白い素地と硬さを特徴とする有田焼は主に何か。A 陶器 B 磁器 C 漆器 D 和紙
+小鹿田焼の代表的な装飾はどれか。A 蒔絵 B 螺鈿 C 飛び鉋 D 沈金
+備前焼の窯変で、稲わらが赤い筋を残すものはどれか。A 火襷 B 青海波 C 七宝 D 蒟醤
+江戸切子が属する分野はどれか。A 木工 B 和紙 C 漆芸 D ガラス
+九谷焼の特徴として最も近いものはどれか。A 色絵 B 無釉焼締 C 型染め D 鍛金
+薩摩切子と同じ系統の工芸はどれか。A 染織 B ガラス C 和菓子 D 木彫
+唐津焼の主な産地はどこか。A 福岡県 B 沖縄県 C 佐賀県 D 岐阜県
+壺屋焼で見られる技法として適切なのはどれか。A 線彫り B 蒔絵 C 沈金 D 友禅
+備前焼の説明として最も適切なのはどれか。A 色絵磁器 B 型染め C 漆塗り D 無釉焼締
+螺鈿で使う素材はどれか。A 金銀粉 B 胡粉 C 貝の真珠層 D 鉄
+金銀粉をまいて漆地に文様を表す技法はどれか。A 蒔絵 B 沈金 C 置上 D 切子
+沈金の説明として適切なのはどれか。A 貝を貼る B 漆地を彫り金粉などを埋める C 紙を漉く D 茶を点てる
+置上の説明として適切なのはどれか。A 金属を鋳る B ガラスを削る C 藍で染める D 白木に胡粉で盛る
+南部鉄器の主な素材はどれか。A 鉄 B 銅 C 銀 D 錫
+蒟醤はどのような漆芸技法か。A 貝を埋める B 金粉をまく C 彫った溝に色漆を埋める D 木を組む
+井波彫刻に最も近い分野はどれか。A 染織 B 木工 C 陶磁器 D 食文化
+漆液を採る木はどれか。A ウルシ B スギ C マツ D ヒノキ
+兵庫県三木市で知られる伝統産業はどれか。A 和紙 B 友禅 C 陶器 D 刃物
+南部風鈴はどの分野に近いか。A 茶道 B 金工 C 染織 D 建築
+細川紙と結びつく県はどれか。A 埼玉県 B 島根県 C 岐阜県 D 福井県
+本美濃紙と結びつく県はどれか。A 埼玉県 B 福井県 C 岐阜県 D 島根県
+石州半紙と結びつく県はどれか。A 岐阜県 B 埼玉県 C 京都府 D 島根県
+日本の紙幣用紙の主原料として知られるものはどれか。A 楮 B 三椏 C 雁皮 D 桐
+和紙の代表的原料として最も不適切なものはどれか。A 桐 B 楮 C 三椏 D 雁皮
+西陣織の産地はどこか。A 福岡 B 鹿児島 C 京都 D 沖縄
+博多織の産地はどこか。A 京都 B 福岡 C 石川 D 奈良
+沖縄の型染めとして知られるものはどれか。A 紅型 B 友禅 C 絞り D 更紗
+大島紬と特に関係が深い地域はどこか。A 佐渡島 B 小豆島 C 淡路島 D 奄美大島
+友禅が属する分野はどれか。A 金工 B 建築 C 染織 D 芸能
+『富嶽三十六景』の作者は誰か。A 歌川広重 B 葛飾北斎 C 喜多川歌麿 D 東洲斎写楽
+『東海道五拾三次』の作者は誰か。A 歌川広重 B 葛飾北斎 C 伊藤若冲 D 円山応挙
+桂離宮を高く評価した建築家は誰か。A ガウディ B ミース C ブルーノ・タウト D ライト
+枯山水の石庭で有名な寺はどれか。A 東大寺 B 東寺 C 法隆寺 D 龍安寺
+世界最古の木造建築群として知られる寺院はどれか。A 法隆寺 B 飛鳥寺 C 清水寺 D 姫路城
+日本最初の本格的仏教寺院はどれか。A 法隆寺 B 飛鳥寺 C 東大寺 D 薬師寺
+首里城正殿は何階建てか。A 1階 B 2階 C 3階 D 4階
+現存天守の数として知られるのはどれか。A 12 B 10 C 8 D 15
+役者絵で特に知られる浮世絵師は誰か。A 歌川広重 B 葛飾北斎 C 喜多川歌麿 D 東洲斎写楽
+美人画で特に知られる浮世絵師は誰か。A 東洲斎写楽 B 喜多川歌麿 C 伊藤若冲 D 円山応挙
+円が連続する文様はどれか。A 七宝 B 籠目 C 亀甲 D 市松
+波を図案化した文様はどれか。A 亀甲 B 巴 C 青海波 D 麻の葉
+亀の甲羅に由来する六角形の文様はどれか。A 七宝 B 亀甲 C 唐草 D 籠目
+編み目に由来し魔除けとも結びつく文様はどれか。A 市松 B 立涌 C 青海波 D 籠目
+子どもの成長祈願と結びつく文様はどれか。A 麻の葉 B 亀甲 C 七宝 D 巴
+格子状の文様はどれか。A 唐草 B 籠目 C 市松 D 青海波
+矢羽根を図案化した文様はどれか。A 麻の葉 B 矢絣 C 七宝 D 亀甲
+萌黄はどの色系統か。A 緑系 B 赤系 C 紫系 D 茶系
+桜色の名は何にちなむか。A 雪 B 海 C 茶 D 桜の花
+古代紫はどの色系統か。A 黄系 B 緑系 C 紫系 D 白系
+抹茶を点てる道具はどれか。A 茶杓 B 茶筅 C 棗 D 茶巾
+抹茶をすくう道具はどれか。A 茶杓 B 茶碗 C 釜 D 柄杓
+『The Book of Tea』の著者は誰か。A 栄西 B 千利休 C 世阿弥 D 岡倉天心
+『喫茶養生記』の著者は誰か。A 空海 B 道元 C 栄西 D 親鸞
+侘び茶を大成させた人物は誰か。A 岡倉天心 B 千利休 C 栄西 D 小堀遠州
+抹茶の原料茶はどれか。A 碾茶 B 番茶 C 焙じ茶 D 玄米茶
+被覆栽培で知られる高級茶はどれか。A 番茶 B ほうじ茶 C 玉露 D 玄米茶
+6月16日は何の日として知られるか。A 茶の日 B 節分 C 彼岸 D 和菓子の日
+落雁はどの分類か。A 干菓子 B 上生菓子 C 焼菓子 D 蒸菓
+練切はどの分類か。A 干菓子 B 上生菓子 C 米菓 D 油菓子
+一年で最も夜が長い日はどれか。A 冬至 B 夏至 C 春分 D 秋分
+七草粥を食べる日はどれか。A 1月1日 B 3月3日 C 1月7日 D 5月5日
+端午の節句に関係する湯はどれか。A 柚子湯 B 桜湯 C 梅湯 D 菖蒲湯
+土用の丑の日に食べることで知られるものはどれか。A 鯛 B 鰻 C 鮎 D 穴子
+七夕の行事食として知られるものはどれか。A そうめん B 雑煮 C おはぎ D 赤飯
+十五夜と対になる月見はどれか。A 十六夜 B 二十夜 C 十三夜 D 九夜
+正月の汁物として知られるものはどれか。A 味噌汁 B 豚汁 C 潮汁 D 雑煮
+大晦日に食べる麺はどれか。A 年越しそば B うどん C きしめん D 冷麦
+和食のユネスコ登録名として正しいものはどれか。A 日本料理 B 和食；日本人の伝統的な食文化 C 会席料理 D 精進料理
+柏餅の葉が縁起物とされる理由はどれか。A 香りが強い B 甘味が出る C 新芽が出るまで古葉が落ちない D 色が濃い
+文楽の三業はどれか。A 太夫・三味線・人形遣い B 笛・太鼓・琵琶 C 花道・隈取・見得 D 能管・小鼓・大鼓
+歌舞伎の祖は誰か。A 近松門左衛門 B 世阿弥 C 観阿弥 D 出雲阿国
+歌舞伎で女性役を専門とする俳優は何か。A 立役 B 女方 C 黒衣 D 主遣い
+客席へ伸びる歌舞伎の通路はどれか。A 橋掛り B 床 C 花道 D 奈落
+歌舞伎の化粧表現はどれか。A 隈取 B 見得 C 口上 D 大向う
+霊的存在が主人公となる能はどれか。A 現在能 B 世話物 C 新派 D 夢幻能
+『曽根崎心中』の作者は誰か。A 井原西鶴 B 近松門左衛門 C 北斎 D 南北
+能の合間に演じられる滑稽味のある芸能はどれか。A 文楽 B 浄瑠璃 C 狂言 D 舞楽
+能舞台風の装置を用いる歌舞伎演目の区分はどれか。A 松羽目物 B 世話物 C 新派 D 読本
+文楽で三つの要素が一体となることを何というか。A 一期一会 B 守破離 C 序破急 D 三業一体`
     };
     const answerKeys = {
       A: "B A C B A B A A A A B B A A B A A A A A A B C D A A B B A A B B A A A A B C A A A B A A A A A A A B A B A A C B A B A C A A A A A A B C A A A B B A A A A A A A",
       B: "A A B A A B A A A A A A B A A A A A A A A B C D A A A A A A A B A A A A B A A A A A C A A A A A A A B B B B A A A A A B A A A A A A A A A A A A B A A A A A A A",
-      C: "A A A A A A A A A A A A A A A A A A A A A B C D A A A A A A A A A A A A A A A A A A A A A A A A A A A B A B A A A A A A A A A A A A A A A A A A A A A A A A A A"
+      C: "A A A A A A A A A A A A A A A A A A A A A B C D A A A A A A A A A A A A A A A A A A A A A A A A A A A B A B A A A A A A A A A A A A A A A A A A A A A A A A A A",
+      D: "A B C A D A B C A D C A B D A C B A D B A C D B A C B A D C B A C D A B C A D B A C B D A C B A D C B A D C B A C D A B A C D B A C D A B C A D B C A D B C A D"
     };
     const sheetRows = [
       ["陶磁器・ガラス","壺屋=沖縄、備前=無釉焼締、江戸切子=カット","有田=磁器、備前=焼締"],
@@ -709,7 +794,9 @@
       return [...arr].sort(() => Math.random() - 0.5);
     }
     function init() {
-      document.getElementById("exam-select").innerHTML = Object.keys(exams).map(k => `<option value="${k}">模擬試験${k}</option>`).join("");
+      const totalQuestions = Object.values(exams).flat().length;
+      document.getElementById("exam-select").innerHTML = `<option value="all-bank">全問題 ${totalQuestions}問</option>` + Object.keys(exams).map(k => `<option value="${k}">模擬試験${k}</option>`).join("");
+      document.getElementById("category-select").innerHTML = `<option value="all">全分野</option>` + CATEGORIES.map(c => `<option value="${c}">${c}</option>`).join("");
       document.getElementById("card-filter").innerHTML = `<option value="all">全分野</option>` + CATEGORIES.map(c => `<option value="${c}">${c}</option>`).join("");
       document.querySelectorAll(".tab").forEach(btn => btn.addEventListener("click", () => switchTab(btn.dataset.tab)));
       document.getElementById("start-exam").addEventListener("click", startExam);
@@ -733,13 +820,26 @@
     }
     function startExam() {
       const examName = document.getElementById("exam-select").value;
+      const category = document.getElementById("category-select").value;
       const mode = document.getElementById("mode-select").value;
-      let qs = exams[examName];
+      let qs = examName === "all-bank" ? Object.values(exams).flat() : exams[examName];
+      if (category !== "all") {
+        qs = qs.filter(q => q.category === category);
+      }
       if (mode === "weak" && state.wrongQuestions.length) {
         const ids = new Set(state.wrongQuestions);
-        qs = Object.values(exams).flat().filter(q => ids.has(`${q.exam}-${q.no}`));
+        qs = qs.filter(q => ids.has(`${q.exam}-${q.no}`));
+      } else if (mode === "random10") {
+        qs = shuffle(qs).slice(0, 10);
       } else if (mode === "random") {
         qs = shuffle(qs).slice(0, 20);
+      }
+      if (!qs.length) {
+        const label = category === "all" ? "この条件" : category;
+        document.getElementById("quiz-area").classList.remove("hidden");
+        document.getElementById("result-area").classList.add("hidden");
+        document.getElementById("quiz-area").innerHTML = `<p class="q-text">${label}の出題対象がありません。</p><p class="note">弱点だけモードの場合は、まず通常モードで何問か解いて誤答を作ってください。</p>`;
+        return;
       }
       quiz = { questions: qs, index: 0, answers: {}, locked: false };
       document.getElementById("result-area").classList.add("hidden");
